@@ -22,15 +22,15 @@ void WritePoints(const std::string& filename, const std::vector<Point2>& points)
 void ReadPoints(const std::string& filename, std::vector<Point2>& points ) {
     points.clear();  
     std::ifstream File(filename); 
- 
-    double * line_data = (double*)malloc(sizeof(double)*3); 
-    if (File.is_open()){
+    double line_data[3] = { 0 }; 
+     if (File.is_open()){
         std::string line; 
      
-        while (getline(File, line, ',') && !line.empty()){
-
+        while (getline(File, line) && !line.empty()){
+           int offset = 0; 
            for (int i = 0; i < 3; i++){
-               File >> line_data[i]; 
+               line_data[i] = std::stod(line.substr(offset, line.find(',', offset + 1) - offset)); 
+               offset = line.find(',', offset+1)+1; 
            }
            points.push_back(Point2{line_data[0],line_data[1],line_data[2]});  
         }
@@ -39,5 +39,4 @@ void ReadPoints(const std::string& filename, std::vector<Point2>& points ) {
     else{
         std::cout << "Couldn't Open File to Read\n"; 
     }
-    delete line_data; 
-}
+  }

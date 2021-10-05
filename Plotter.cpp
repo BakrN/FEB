@@ -10,7 +10,8 @@ void Plot2D::DrawPositionsPoints() {
     }
     m_Plot.xlabel("x"); 
     m_Plot.ylabel("y");
-    m_Plot.drawPoints(sciplot::Vec(xCoords.data(),xCoords.size()), sciplot::Vec(yCoords.data(),yCoords.size())).pointType(0); // could replace all casting by creating a private sciplot member in Plot2/3D classes and create iterator functions; 
+  
+    m_Plot.drawPoints(sciplot::Vec(xCoords.data(),xCoords.size()), sciplot::Vec(yCoords.data(),yCoords.size())).pointSize(5); // could replace all casting by creating a private sciplot member in Plot2/3D classes and create iterator functions; 
 }
 
 void Plot2D::DrawHistogram() {

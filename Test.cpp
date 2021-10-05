@@ -47,11 +47,22 @@ int main(){
     for (int i=0 ; i < vect_pts.size() ; i++){
         std::cout << "(x,y,theta) = ( " << vect_pts[i].x << " , " << vect_pts[i].y << " , " << vect_pts[i].theta << " )" << std::endl;
     }
+
     std::string FileName = "OutputPoints.txt"; 
     //Write To File
     WritePoints(FileName, vect_pts); 
     //Read From File
     ReadPoints(FileName, vect_pts); 
     //XY Plot
-
+        
+    for (int i=0 ; i < vect_pts.size() ; i++){
+        std::cout << "(x,y,theta) = ( " << vect_pts[i].x << " , " << vect_pts[i].y << " , " << vect_pts[i].theta << " )" << std::endl;
+    } 
+    PlotsFigure figure("Showing Vecs"); 
+    Plot2D plot(vect_pts); 
+    plot.DrawPositionsPoints(); 
+    figure.AttatchPlots({plot}); 
+    
+    figure.Show(); 
+    
 }
