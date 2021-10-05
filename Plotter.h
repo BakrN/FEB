@@ -4,32 +4,46 @@
 // Variants need to be used because of sciplot but could probably change library file to accept different types if needed
 class Plot2D; 
 class Plot3D; 
+
 using PlotList = std::initializer_list<std::variant<Plot2D,Plot3D>> ; 
 using PlotVectorList = std::vector<std::vector<sciplot::PlotVariant>>; 
 
 #include "GlobalTypes.h" 
+/*template <typename T> 
+class BasePlot {
+private: 
+    friend class Plot3D; 
+    friend class Plot2D; 
 
-class Plot3D : public sciplot::Plot3D{
+public: 
+    virtual T& GetPlot() = 0; 
+    virtual void DrawPositionsPoints() = 0; 
+
+    template <typename F> 
+    virtual void DrawPositionsFunc(const std::function<F>& f) = 0;
+
+    //Different Functions for plotting we want we can add here
+   };*/
+
+class Plot3D {
     private: 
+        sciplot::Plot3D m_Plot;  
     public: 
+    Plot3D(); 
+    sciplot::Plot3D& GetPlot()  { return m_Plot; };
+};
 
-}; 
-
-class Plot2D :public sciplot::Plot{
+class Plot2D {
     private: 
-        std::vector<Point2> m_Points; 
-        
+        sciplot::Plot m_Plot;  
+        std::vector<Point2> m_Points;
     public: 
-    Plot2D() : sciplot::Plot() {}; 
-    Plot2D(const std::vector<Point2>& Points) : sciplot::Plot(){ 
+    Plot2D(); 
+    Plot2D(const std::vector<Point2>& Points) { 
         m_Points = Points; 
     }; 
-    template <typename T>  
-    void DrawLineGraph(std::function<T> function) { // could also take func pointer
-        // Definition will go here
-
-    }; 
-    void DrawXYPlot(); // With Points 
+    sciplot::Plot& GetPlot() { return m_Plot; };
+    void DrawPositionsPoints() ; 
     void DrawHistogram();  // Not Implemented Yet 
 }; 
  
@@ -44,14 +58,18 @@ private:
 
     sciplot::Figure* m_Figure;
     template<typename T1,typename T2> 
-    void SetLineSpace(T1 x0, T2 x1); 
+    void SetLineSpace(T1 x0, T2 x1){
+
+    }; 
 public:
     ~PlotsFigure(); 
-    PlotsFigure(const std::string& Title) : m_Title(Title) { };
+    PlotsFigure(); 
+    PlotsFigure(const std::string& Title) : m_Title(Title) { m_Figure = nullptr;  };
     //PlotsFigure(const PlotList& Plots, const std::string& Title, const uint32_t* layout); 
     void Show(); 
     void SetPalette(const std::string& palette) { m_Palette = palette;};  // probably create enum to see all options
     void SetLayout(uint32_t rows, uint32_t cols) {m_Layout[0] = rows; m_Layout[1] = cols;  }; 
     void SetSize(uint32_t x_size, uint32_t y_size){m_Size[0] = x_size; m_Size[1] = y_size; }; 
-    void AttatchPlots(PlotList Plots) ; // Note: will have to change cpy ctr move data so that not every element is copied with passed 
+    
+    void AttatchPlots(PlotList Plots) ;  
 }; 
