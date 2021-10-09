@@ -1,6 +1,7 @@
 #include "Plotter.h"
+#define NOISE_AMPLITUDE 0.15
 
-void Plot2D::DrawPositionsPoints() {
+sciplot::DrawSpecs& Plot2D::DrawPositionsPoints() {
     std::vector<double> xCoords,yCoords; 
     xCoords.reserve(m_Points.size()); 
     yCoords.reserve(m_Points.size()); 
@@ -10,13 +11,14 @@ void Plot2D::DrawPositionsPoints() {
     }
     m_Plot.xlabel("x"); 
     m_Plot.ylabel("y");
-  
-    m_Plot.drawPoints(sciplot::Vec(xCoords.data(),xCoords.size()), sciplot::Vec(yCoords.data(),yCoords.size())).pointSize(5); // could replace all casting by creating a private sciplot member in Plot2/3D classes and create iterator functions; 
+    return m_Plot.drawPoints(sciplot::Vec(xCoords.data(),xCoords.size()), sciplot::Vec(yCoords.data(),yCoords.size())).pointSize(2).label(m_Title); // could replace all casting by creating a private sciplot member in Plot2/3D classes and create iterator functions; 
 }
 
-void Plot2D::DrawHistogram() {
-    
+void Plot2D::SetPoints(const std::vector<Pose2>& Points)
+{
+    this->m_Points = Points; 
 }
+
 
 PlotsFigure::~PlotsFigure() {
     delete m_Figure; 
@@ -24,14 +26,38 @@ PlotsFigure::~PlotsFigure() {
 
 void PlotsFigure::AttatchPlots(PlotList Plots){
     for(auto p: Plots){
-        try{
-            m_Plots.push_back(std::vector<sciplot::PlotVariant>{std::get<Plot2D>(p).GetPlot()});
+        if (dynamic_cast<Plot2D*>(p)) {
+            auto p_cast = dynamic_cast<Plot2D*>(p); 
+            m_Plots.push_back(std::vector<sciplot::PlotVariant>{p_cast->GetPlot()});
         }
-        catch(...){
-            m_Plots.push_back(std::vector<sciplot::PlotVariant>{std::get<Plot3D>(p).GetPlot()});
-        }
-        
+        else {
+            auto p_cast = dynamic_cast<Plot3D*>(p);
+            m_Plots.push_back(std::vector<sciplot::PlotVariant>{p_cast->GetPlot()});
+        }                 
     }
+}
+
+void PlotsFigure::PlotGeneratedCarTrackWithNoise(const std::function<double(double)>& func, double lb, double ub,double landmark_distance,double car_distance, uint32_t point_count)
+{
+    std::vector<Pose2> car_positions = GenerateCarPositions(func, lb, ub, point_count);
+    std::vector<Point2> landmarks = GenerateLandmarkPositions(car_positions,landmark_distance, car_distance);
+    AddNoiseLandmarkPositions(landmarks, NOISE_AMPLITUDE);
+    AddNoiseCarPositions(car_positions, NOISE_AMPLITUDE); 
+    std::vector<Pose2> landmark_positions;
+    for (int i = 0; i < landmarks.size(); i++) {
+        landmark_positions.push_back(Pose2{ landmarks[i].x,landmarks[i].y,0 });
+    }
+    BasePlot* plot = new Plot2D("", car_positions); 
+    plot->DrawPositionsPoints(); 
+    plot->SetPoints(landmark_positions); 
+    plot->DrawPositionsPoints();
+    this->AttatchPlots({ plot }); 
+    this->Show();
+    delete plot; 
+}
+
+void PlotsFigure::PlotCarPositionsAndLandMarks(const std::vector<Pose2>& CarPositions, const std::vector<Point2>& LandMarkPositions)
+{
 }
 
 void PlotsFigure::Show() {
