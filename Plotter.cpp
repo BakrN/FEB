@@ -58,6 +58,19 @@ void PlotsFigure::PlotGeneratedCarTrackWithNoise(const std::function<double(doub
 
 void PlotsFigure::PlotCarPositionsAndLandMarks(const std::vector<Pose2>& CarPositions, const std::vector<Point2>& LandMarkPositions)
 {
+        BasePlot* plot = new Plot2D("Car/landmark positions", CarPositions); 
+        plot->DrawPositionsPoints(); 
+        std::vector<Pose2> landmark_positions;
+    for (int i = 0; i < LandMarkPositions.size(); i++) {
+        landmark_positions.push_back(Pose2{ LandMarkPositions[i].x,LandMarkPositions[i].y,0 });
+    }
+
+        plot->SetPoints(landmark_positions); 
+        plot->DrawPositionsPoints();
+        this->AttatchPlots({ plot }); 
+        this->Show();
+        delete plot;  
+    
 }
 
 void PlotsFigure::Show() {
