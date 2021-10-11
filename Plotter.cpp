@@ -1,6 +1,11 @@
 #include "Plotter.h"
 #define NOISE_AMPLITUDE 0.15
+void Plot3D::SetPoints(const std::vector<Pose2>& Points){
 
+}
+
+sciplot::DrawSpecs& Plot3D::DrawPositionsPoints() {
+}
 sciplot::DrawSpecs& Plot2D::DrawPositionsPoints() {
     std::vector<double> xCoords,yCoords; 
     xCoords.reserve(m_Points.size()); 
