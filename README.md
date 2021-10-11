@@ -3,7 +3,10 @@ This project is for my code contributions for [Formula Electric Belgium](https:/
 
 
 This project requires the installation of gnuplot. Please download it from [here](https://sourceforge.net/projects/gnuplot/files/gnuplot/5.4.2/ ). 
-
+On linux you can run this: 
+```console 
+sudo apt-get install -y gnuplot
+```
 
 To set up and run project:
 ```console
