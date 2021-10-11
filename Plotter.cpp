@@ -5,6 +5,7 @@ void Plot3D::SetPoints(const std::vector<Pose2>& Points){
 }
 
 sciplot::DrawSpecs& Plot3D::DrawPositionsPoints() {
+    return m_Plot.drawPoints(sciplot::Vec{},sciplot::Vec{},sciplot::Vec{}); 
 }
 sciplot::DrawSpecs& Plot2D::DrawPositionsPoints() {
     std::vector<double> xCoords,yCoords; 
